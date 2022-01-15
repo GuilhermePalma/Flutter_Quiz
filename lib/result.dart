@@ -9,16 +9,22 @@ class Result extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String valueScore = scoreQuiz.toString().length > 4
+        ? scoreQuiz.toString().substring(0, 4)
+        : scoreQuiz.toString();
+
     return Column(
       // Centraliza o Conteudo
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        CustomText("Parabens !"),
+        CustomText(
+          scoreQuiz > 6 ? "Parabens !" : "Que pena, não foi dessa vez.",
+        ),
         Container(
           margin: const EdgeInsets.all(16),
           child: Text(
             // Mostra a Pontuação com 2 Casas Decimais
-            "Sua Pontuação Media foi: ${scoreQuiz.toString().substring(0, 4)}",
+            "Sua Pontuação Media foi: $valueScore",
             style: const TextStyle(
               fontSize: 16,
               color: Colors.black,
