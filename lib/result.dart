@@ -7,6 +7,18 @@ class Result extends StatelessWidget {
 
   Result({required this.scoreQuiz, required this.onResetQuiz});
 
+  String get phraseResult {
+    if (scoreQuiz >= 8) {
+      return "Parabéns ! Você conhece muito de Flutter";
+    } else if (scoreQuiz >= 7) {
+      return "Parabéns ! Você sabe algumas coisas sobre o Flutter";
+    } else if (scoreQuiz < 5) {
+      return "Não foi dessa vez ! Você conhece pouco do Flutter";
+    } else {
+      return "Ops, ocorreu um Erro.";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     String valueScore = scoreQuiz.toString().length > 4
@@ -17,9 +29,7 @@ class Result extends StatelessWidget {
       // Centraliza o Conteudo
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        CustomText(
-          scoreQuiz > 6 ? "Parabens !" : "Que pena, não foi dessa vez.",
-        ),
+        CustomText(phraseResult),
         Container(
           margin: const EdgeInsets.all(16),
           child: Text(
