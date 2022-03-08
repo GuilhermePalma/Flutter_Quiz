@@ -3,6 +3,10 @@
 
 ---
 
+<h3 align="center">Projeto Temporariamente Pausado.</h3>
+<p align="center"><a href="https://github.com/GuilhermePalma?tab=repositories&q=&type=&language=dart&sort=" target="_blank">Veja aqui</a> outros Projetos em Flutter</p>
+
+
 ## Sobre o Projeto
 APP desenvolvido em Flutter sobre Fatos e Curiosidades do Flutter. O Objetivo desse APP é praticar os fundamentos do Flutter, como Widgets com Atualização de Estado, Instancia de Classes, Fragmentação de Widgets da Aplicação e manipulação de dados.
 
@@ -30,5 +34,4 @@ cd Flutter_Quiz
 
 # 3 - Inicie o VsCode (Opcional, tambem pode utilizar o Android Studio)
 code .
-
 ```
