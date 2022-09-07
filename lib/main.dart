@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:quiz/screens/error_screen.dart';
+import 'package:quiz/screens/loading_filters_screen.dart';
 import 'package:quiz/screens/home_screen.dart';
 import 'package:quiz/screens/quiz_screen.dart';
 import 'package:quiz/utils/app_routes.dart';
@@ -17,7 +18,7 @@ class MyApp extends StatelessWidget {
       routes: {
         AppRoutes.homeRoute: (ctx) => const HomeScreen(),
         AppRoutes.randomQuestions: (ctx) => const QuizScreen(),
-        // AppRoutes.tagsAndCategories: (ctx) => const ErrorScreen(),
+        AppRoutes.tagsAndCategories: (ctx) => const LoadingFiltersScreen(),
       },
       initialRoute: AppRoutes.homeRoute,
       onUnknownRoute: (settings) =>

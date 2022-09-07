@@ -19,7 +19,7 @@ class ErrorScreen extends StatelessWidget {
           children: [
             Text(
               "Ocorreu um Erro ao Executar sua Solicitação. Tente Novamente !",
-              style: Theme.of(context).textTheme.headline1,
+              style: Theme.of(context).textTheme.headline5,
               textAlign: TextAlign.center,
             ),
             Padding(

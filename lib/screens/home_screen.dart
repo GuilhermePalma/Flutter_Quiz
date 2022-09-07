@@ -43,10 +43,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         label: const Text("Perguntas Aleatorias"),
                       ),
                       ElevatedButton.icon(
-                        onPressed: () {
-                          // TODO: questions filter
-                          print("TODO: questions filter");
-                        },
+                        onPressed: () => Navigator.of(context)
+                            .pushNamed(AppRoutes.tagsAndCategories),
                         icon: const Icon(Icons.search),
                         label: const Text("Filtrar Perguntas"),
                       ),
