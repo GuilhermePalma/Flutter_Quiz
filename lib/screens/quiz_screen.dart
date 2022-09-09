@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 
 import '../components/quiz.dart';
 import '../components/result.dart';
-import '../data/dummy_data.dart';
+import '../model/entities/quiz_entity.dart';
 
 // Cria o Estado dos Widgets do APP. Esses Widgets podem ser alterados em tempo de execução
 class QuizScreen extends StatefulWidget {
-  const QuizScreen({Key? key}) : super(key: key);
+  final List<QuizEntity> quiz;
+
+  const QuizScreen({Key? key, required this.quiz}) : super(key: key);
 
   @override
   _MyAppState createState() => _MyAppState();
@@ -19,7 +21,7 @@ class _MyAppState extends State<QuizScreen> {
 
   // Metodo que Verifica se Todas as Questões já foram exibidas
   bool get hasNextQuestion {
-    return indexQuestion < questionsList.length;
+    return indexQuestion < widget.quiz.length;
   }
 
   // Metodo Acionado ao Responder uma Questão
@@ -36,31 +38,40 @@ class _MyAppState extends State<QuizScreen> {
         finalScore = 0;
       });
 
+  // TODO: REMOVE AND REFACT STRUCT OF QUESTIONS
+  List<Map<String, Object>> _convertToMap() => widget.quiz
+      .map((e) => Map<String, Object>.from({
+            "question": e.question,
+            "response": [
+              ...e.incorrectAnswers
+                  .map((e) => Map<String, Object>.from({
+                        "text": e,
+                        "value": 0,
+                      }))
+                  .toList(),
+              Map<String, Object>.from({
+                "text": e.correctAnswer,
+                "value": 10,
+              })
+            ]
+          }))
+      .toList();
+
   // Criação do Widget da Pagina Principal
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text("Quiz APP"),
-          actions: [
-            IconButton(
-              onPressed: () => Navigator.of(context).pop(),
-              icon: const Icon(Icons.home_outlined),
+    return Scaffold(
+      appBar: AppBar(title: const Text("Quiz APP")),
+      body: hasNextQuestion
+          ? Quiz(
+              // listQuestions: widget.quiz,
+              listQuestions: _convertToMap(),
+              indexSelected: indexQuestion,
+              clickButton: onAnwser)
+          : Result(
+              scoreQuiz: finalScore / widget.quiz.length,
+              onResetQuiz: onResetQuiz,
             ),
-          ],
-        ),
-        body: hasNextQuestion
-            ? Quiz(
-                listQuestions: questionsList,
-                indexSelected: indexQuestion,
-                clickButton: onAnwser)
-            : Result(
-                scoreQuiz: finalScore / questionsList.length,
-                onResetQuiz: onResetQuiz,
-              ),
-      ),
     );
   }
 }

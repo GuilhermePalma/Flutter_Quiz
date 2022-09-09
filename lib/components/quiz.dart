@@ -8,10 +8,11 @@ class Quiz extends StatelessWidget {
   final int indexSelected;
   final void Function(int) clickButton;
 
-  Quiz(
-      {required this.listQuestions,
-      required this.indexSelected,
-      required this.clickButton});
+  const Quiz({
+    required this.listQuestions,
+    required this.indexSelected,
+    required this.clickButton,
+  });
 
   @override
   Widget build(BuildContext context) {

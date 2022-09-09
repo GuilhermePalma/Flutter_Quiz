@@ -1,9 +1,9 @@
 class RequestsUrl {
-  static const String urlBase = "https://the-trivia-api.com/api";
-  static const String urlQuestionsBase = urlBase + "/questions";
-  static const String urlTags = urlBase + "/tags";
-  static const String urlCategories = urlBase + "/categories";
-  static const String urlMetadata = urlBase + "/metadata";
+  static const String _urlBase = "https://the-trivia-api.com/api";
+  static const String urlQuestionsBase = _urlBase + "/questions";
+  static const String urlTags = _urlBase + "/tags";
+  static const String urlCategories = _urlBase + "/categories";
+  static const String urlMetadata = _urlBase + "/metadata";
 
   static const String paramCategories = "categories";
   static const String paramTags = "tags";

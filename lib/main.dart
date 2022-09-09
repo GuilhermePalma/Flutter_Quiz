@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:quiz/screens/error_screen.dart';
-import 'package:quiz/screens/loading_filters_screen.dart';
 import 'package:quiz/screens/home_screen.dart';
-import 'package:quiz/screens/quiz_screen.dart';
+import 'package:quiz/screens/loading_filters_screen.dart';
+import 'package:quiz/screens/quiz_loading_screen.dart';
 import 'package:quiz/utils/app_routes.dart';
 
 void main() => runApp(const MyApp());
@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
       home: const HomeScreen(),
       routes: {
         AppRoutes.homeRoute: (ctx) => const HomeScreen(),
-        AppRoutes.randomQuestions: (ctx) => const QuizScreen(),
+        AppRoutes.randomQuestions: (ctx) => const QuizLoadingScreen(),
         AppRoutes.tagsAndCategories: (ctx) => const LoadingFiltersScreen(),
       },
       initialRoute: AppRoutes.homeRoute,
