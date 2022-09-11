@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:quiz/utils/app_routes.dart';
+import 'package:quiz/utils/requests_url.dart';
 
 class FiltersScreen extends StatefulWidget {
   final Map<String, dynamic> categories;
@@ -18,10 +20,11 @@ class FiltersScreen extends StatefulWidget {
 }
 
 class _FiltersScreenState extends State<FiltersScreen> {
-  final Set<String> _selectedTags = {};
-  Set<String> _selectedCategory = {};
-  String _selectedDifficulty = "";
+  Set<String>? _selectedTags;
+  Set<String>? _selectedCategory;
+  String? _selectedDifficulty;
   double _quantityQuestions = 10;
+  String _uriWithFilters = RequestsUrl.urlQuestionsBase;
 
   @override
   Widget build(BuildContext context) {
@@ -49,8 +52,29 @@ class _FiltersScreenState extends State<FiltersScreen> {
                         _getFiltersInputs(widget.categories, widget.tags)),
               ),
               ElevatedButton.icon(
-                onPressed: () =>
-                    Navigator.of(context).pushNamed(AppRoutes.randomQuestions),
+                onPressed: () async {
+                  var _containsValues = await _checkReturnFilter(context);
+                  if (_containsValues) {
+                    Navigator.of(context).pushNamed(AppRoutes.randomQuestions,
+                        arguments: _uriWithFilters);
+                  } else {
+                    showDialog(
+                      context: context,
+                      builder: (ctx) => AlertDialog(
+                        title: const Text("Filtro Invalido"),
+                        content: const Text(
+                            "Com os Filtros atuais, não há resultados compativeis.\n"
+                            "Remova ou Altere os Filtros para Obter as Perguntas"),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            child: const Text("OK"),
+                          )
+                        ],
+                      ),
+                    );
+                  }
+                },
                 icon: const Icon(Icons.golf_course_outlined),
                 label: const FittedBox(child: Text("Ir para as Perguntas")),
               ),
@@ -70,8 +94,13 @@ class _FiltersScreenState extends State<FiltersScreen> {
           border: OutlineInputBorder(),
         ),
         items: _createDropDownItems(categories.keys.toList()),
-        onChanged: (e) => setState(
-            () => _selectedCategory = Set.from(widget.categories[e as String])),
+        onChanged: (e) => setState(() {
+          if (_selectedCategory == null) {
+            _selectedCategory = {e.toString()};
+          } else {
+            _selectedCategory!.add(e.toString());
+          }
+        }),
       ),
       const SizedBox(height: 24),
       DropdownButtonFormField(
@@ -81,7 +110,13 @@ class _FiltersScreenState extends State<FiltersScreen> {
           border: OutlineInputBorder(),
         ),
         items: _createDropDownItems(tags),
-        onChanged: (e) => setState(() => _selectedTags.add(e.toString())),
+        onChanged: (e) => setState(() {
+          if (_selectedTags == null) {
+            _selectedTags = {e.toString()};
+          } else {
+            _selectedTags!.add(e.toString());
+          }
+        }),
       ),
       const SizedBox(height: 24),
       DropdownButtonFormField(
@@ -113,4 +148,25 @@ class _FiltersScreenState extends State<FiltersScreen> {
   _createDropDownItems(List<dynamic> list) => list
       .map((item) => DropdownMenuItem(child: Text(item), value: item))
       .toList();
+
+  Future<bool> _checkReturnFilter(BuildContext context) async {
+    String uri = "";
+    if (_selectedDifficulty != null) {
+      uri = RequestsUrl.addDifficultyFilter(uri, _selectedDifficulty!);
+    }
+    if (_selectedCategory != null) {
+      uri = RequestsUrl.addCategoriesFilter(uri, _selectedCategory!.toList());
+    }
+    if (_selectedTags != null) {
+      uri = RequestsUrl.addTagsFilter(uri, _selectedTags!.toList());
+    }
+    uri = RequestsUrl.addLimitFilter(uri, _quantityQuestions.toInt());
+
+    _uriWithFilters = RequestsUrl.urlQuestionsBase + Uri.encodeFull(uri);
+
+    var responseForRequest = await http.get(Uri.parse(_uriWithFilters));
+    return responseForRequest.statusCode == 200 &&
+        responseForRequest.body != "" &&
+        responseForRequest.body != "[]";
+  }
 }

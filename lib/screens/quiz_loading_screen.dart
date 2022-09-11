@@ -13,11 +13,10 @@ class QuizLoadingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var _stringRequest = ModalRoute.of(context)?.settings.arguments ??
+    var _requestString = ModalRoute.of(context)?.settings.arguments ??
         RequestsUrl.urlQuestionsBase;
-
     return FutureBuilder(
-      future: _getQuestions(_stringRequest.toString()),
+      future: _getQuestions(_requestString.toString()),
       builder: (ctx, AsyncSnapshot<dynamic> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return const Scaffold(body: Center(child: LoadingWidget()));
@@ -30,9 +29,9 @@ class QuizLoadingScreen extends StatelessWidget {
     );
   }
 
-  Future<List<QuizEntity>> _getQuestions(String stringRequest) async {
+  Future<List<QuizEntity>> _getQuestions(String requestString) async {
     try {
-      final responseAPI = await http.get(Uri.parse(stringRequest));
+      final responseAPI = await http.get(Uri.parse(requestString));
 
       if (responseAPI.statusCode != 200) {
         throw (HttpExceptions(

@@ -25,25 +25,34 @@ class RequestsUrl {
 
   static String addCategoriesFilter(String request, List<Object> param) =>
       request +
-      (request.contains("?") ? "&categories=" : "?categories=") +
+      (request.contains("?") ? "&" : "?") +
+      paramCategories +
+      "=" +
       formatParameters(param);
 
   static String addTagsFilter(String request, List<Object> param) =>
       request +
-      (request.contains("?") ? "&tags=" : "?tags=") +
+      (request.contains("?") ? "&" : "?") +
+      paramTags +
+      "=" +
       formatParameters(param);
 
-  static String addLimitFilter(String request, int limitItems) =>
-      request +
-      (request.contains("?") ? "&limit=" : "?limit=") +
-      limitItems.toString();
+  static String addLimitFilter(String request, int limitItems) {
+    return request +
+        (request.contains("?") ? "&" : "?") +
+        paramLimit +
+        "=" +
+        limitItems.toString();
+  }
 
   static String addRegionEncodeFilter(String request, String encode) =>
-      request + (request.contains("?") ? "&region=" : "?region=") + encode;
+      request + (request.contains("?") ? "&" : "?") + paramRegion + encode;
 
   static String addDifficultyFilter(String request, String difficulty) =>
       request +
-      (request.contains("?") ? "&difficulty=" : "?difficulty=") +
+      (request.contains("?") ? "&" : "?") +
+      paramDifficulty +
+      "=" +
       difficulty;
 
   static String formatParameters(List<dynamic> param) => param.join(",");
