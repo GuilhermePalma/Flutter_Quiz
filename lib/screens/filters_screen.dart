@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:multiselect/multiselect.dart';
 import 'package:quiz/utils/app_routes.dart';
-import 'package:quiz/utils/requests_url.dart';
+
+import '../utils/requests_url.dart';
 
 class FiltersScreen extends StatefulWidget {
   final Map<String, dynamic> categories;
@@ -20,8 +22,8 @@ class FiltersScreen extends StatefulWidget {
 }
 
 class _FiltersScreenState extends State<FiltersScreen> {
-  Set<String>? _selectedTags;
-  Set<String>? _selectedCategory;
+  List<String> _selectedTags = [];
+  List<String> _selectedCategory = [];
   String? _selectedDifficulty;
   double _quantityQuestions = 10;
   String _uriWithFilters = RequestsUrl.urlQuestionsBase;
@@ -33,90 +35,75 @@ class _FiltersScreenState extends State<FiltersScreen> {
         title: const Text("Configurar Perguntas"),
       ),
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Text("Selecione os Filtros para as Perguntas",
-                    textAlign: TextAlign.center,
-                    style: Theme.of(context).textTheme.headline5),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                    children:
-                        _getFiltersInputs(widget.categories, widget.tags)),
-              ),
-              ElevatedButton.icon(
-                onPressed: () async {
-                  var _containsValues = await _checkReturnFilter(context);
-                  if (_containsValues) {
-                    Navigator.of(context).pushNamed(AppRoutes.randomQuestions,
-                        arguments: _uriWithFilters);
-                  } else {
-                    showDialog(
-                      context: context,
-                      builder: (ctx) => AlertDialog(
-                        title: const Text("Filtro Invalido"),
-                        content: const Text(
-                            "Com os Filtros atuais, não há resultados compativeis.\n"
-                            "Remova ou Altere os Filtros para Obter as Perguntas"),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.of(context).pop(),
-                            child: const Text("OK"),
-                          )
-                        ],
-                      ),
-                    );
-                  }
-                },
-                icon: const Icon(Icons.golf_course_outlined),
-                label: const FittedBox(child: Text("Ir para as Perguntas")),
-              ),
-            ],
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Text("Selecione os Filtros para as Perguntas",
+                      textAlign: TextAlign.center,
+                      style: Theme.of(context).textTheme.headline5),
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: _getFiltersInputs(widget.categories, widget.tags),
+                  ),
+                ),
+                ElevatedButton.icon(
+                  onPressed: () async {
+                    if (await _checkReturnFilter(context)) {
+                      Navigator.of(context).pushNamed(AppRoutes.randomQuestions,
+                          arguments: _uriWithFilters);
+                    } else {
+                      showDialog(
+                        context: context,
+                        builder: (ctx) => AlertDialog(
+                          title: const Text("Filtro Invalido"),
+                          content: const Text(
+                              "Com os Filtros atuais, não há resultados compativeis.\n"
+                              "Remova ou Altere os Filtros para Obter as Perguntas"),
+                          actions: [
+                            TextButton(
+                              onPressed: () => Navigator.of(context).pop(),
+                              child: const Text("OK"),
+                            )
+                          ],
+                        ),
+                      );
+                    }
+                  },
+                  icon: const Icon(Icons.golf_course_outlined),
+                  label: const FittedBox(child: Text("Ir para as Perguntas")),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
+  /// With API values, create Input with values
   _getFiltersInputs(Map<String, dynamic> categories, List<dynamic> tags) {
     return [
-      DropdownButtonFormField(
-        decoration: const InputDecoration(
-          label: Text("Categorias"),
-          hintText: "Selecione uma Categoria",
-          border: OutlineInputBorder(),
-        ),
-        items: _createDropDownItems(categories.keys.toList()),
-        onChanged: (e) => setState(() {
-          if (_selectedCategory == null) {
-            _selectedCategory = {e.toString()};
-          } else {
-            _selectedCategory!.add(e.toString());
-          }
-        }),
+      DropDownMultiSelect(
+        onChanged: (List<String> x) => setState(() => _selectedCategory = x),
+        options: categories.keys.map((e) => e.toString()).toList(),
+        selectedValues: _selectedCategory,
+        hint: const Text("Categorias"),
       ),
       const SizedBox(height: 24),
-      DropdownButtonFormField(
-        decoration: const InputDecoration(
-          label: Text("Tags"),
-          hintText: "Selecione as Tags",
-          border: OutlineInputBorder(),
-        ),
-        items: _createDropDownItems(tags),
-        onChanged: (e) => setState(() {
-          if (_selectedTags == null) {
-            _selectedTags = {e.toString()};
-          } else {
-            _selectedTags!.add(e.toString());
-          }
-        }),
+      DropDownMultiSelect(
+        onChanged: (List<String> x) => setState(() => _selectedTags = x),
+        options: tags.map((e) => e.toString()).toList(),
+        selectedValues: _selectedTags,
+        hint: const Text("Tags"),
       ),
       const SizedBox(height: 24),
       DropdownButtonFormField(
@@ -154,11 +141,11 @@ class _FiltersScreenState extends State<FiltersScreen> {
     if (_selectedDifficulty != null) {
       uri = RequestsUrl.addDifficultyFilter(uri, _selectedDifficulty!);
     }
-    if (_selectedCategory != null) {
-      uri = RequestsUrl.addCategoriesFilter(uri, _selectedCategory!.toList());
+    if (_selectedCategory.isNotEmpty) {
+      uri = RequestsUrl.addCategoriesFilter(uri, _selectedCategory.toList());
     }
-    if (_selectedTags != null) {
-      uri = RequestsUrl.addTagsFilter(uri, _selectedTags!.toList());
+    if (_selectedTags.isNotEmpty) {
+      uri = RequestsUrl.addTagsFilter(uri, _selectedTags.toList());
     }
     uri = RequestsUrl.addLimitFilter(uri, _quantityQuestions.toInt());
 
