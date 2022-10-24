@@ -4,7 +4,7 @@ import '../model/entities/quiz_entity.dart';
 import 'buttonAnswer.dart';
 import 'customText.dart';
 
-class Quiz extends StatelessWidget {
+class Quiz extends StatefulWidget {
   final QuizEntity quizEntity;
   final void Function(int) clickButton;
 
@@ -12,15 +12,41 @@ class Quiz extends StatelessWidget {
       : super(key: key);
 
   @override
+  State<Quiz> createState() => _QuizState();
+}
+
+class _QuizState extends State<Quiz> {
+  bool isAnswered = false;
+
+  void changeIsAnswered() => setState(() => isAnswered = !isAnswered);
+
+  @override
   Widget build(BuildContext context) {
     return Column(
-      children: [CustomText(quizEntity.question), ..._getResponses()],
+      children: [
+        CustomText(widget.quizEntity.question),
+        ..._getResponsesButtons(),
+      ],
     );
   }
 
-  List<Widget> _getResponses() => [
-        ...quizEntity.incorrectAnswers
-            .map((e) => ButtonAnswer(e, () => clickButton(0))),
-        ButtonAnswer(quizEntity.correctAnswer, () => clickButton(10))
+  List<Widget> _getResponsesButtons() => [
+        ...widget.quizEntity.incorrectAnswers.map((e) => ButtonAnswer(
+              text: e,
+              isCorrectAnswer: false,
+              isAnswered: isAnswered,
+              functionPressed: _internalState,
+            )),
+        ButtonAnswer(
+          text: widget.quizEntity.correctAnswer,
+          isCorrectAnswer: true,
+          isAnswered: isAnswered,
+          functionPressed: _internalState,
+        )
       ]..shuffle();
+
+  _internalState() {
+    changeIsAnswered();
+    // widget.clickButton(0);
+  }
 }

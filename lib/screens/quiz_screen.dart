@@ -23,7 +23,7 @@ class _MyAppState extends State<QuizScreen> {
   bool get hasNextQuestion => indexQuestion < widget.quiz.length;
 
   // Metodo Acionado ao Responder uma Questão
-  void onAnwser(int score) {
+  void whenAnswer(int score) {
     if (hasNextQuestion) {
       setState(() => indexQuestion++);
       finalScore += score;
@@ -44,7 +44,10 @@ class _MyAppState extends State<QuizScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text("Quiz APP")),
       body: hasNextQuestion
-          ? Quiz(quizEntity: widget.quiz[indexQuestion], clickButton: onAnwser)
+          ? Quiz(
+              quizEntity: widget.quiz[indexQuestion],
+              clickButton: whenAnswer,
+            )
           : Result(scoreQuiz: _scoreQuiz, onResetQuiz: onResetQuiz),
     );
   }
