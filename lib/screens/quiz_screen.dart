@@ -20,9 +20,7 @@ class _MyAppState extends State<QuizScreen> {
   int finalScore = 0;
 
   // Metodo que Verifica se Todas as Questões já foram exibidas
-  bool get hasNextQuestion {
-    return indexQuestion < widget.quiz.length;
-  }
+  bool get hasNextQuestion => indexQuestion < widget.quiz.length;
 
   // Metodo Acionado ao Responder uma Questão
   void onAnwser(int score) {
@@ -38,24 +36,7 @@ class _MyAppState extends State<QuizScreen> {
         finalScore = 0;
       });
 
-  // TODO: REMOVE AND REFACT STRUCT OF QUESTIONS
-  List<Map<String, Object>> _convertToMap() => widget.quiz
-      .map((e) => Map<String, Object>.from({
-            "question": e.question,
-            "response": [
-              ...e.incorrectAnswers
-                  .map((e) => Map<String, Object>.from({
-                        "text": e,
-                        "value": 0,
-                      }))
-                  .toList(),
-              Map<String, Object>.from({
-                "text": e.correctAnswer,
-                "value": 10,
-              })
-            ]
-          }))
-      .toList();
+  double get _scoreQuiz => finalScore / widget.quiz.length;
 
   // Criação do Widget da Pagina Principal
   @override
@@ -63,15 +44,8 @@ class _MyAppState extends State<QuizScreen> {
     return Scaffold(
       appBar: AppBar(title: const Text("Quiz APP")),
       body: hasNextQuestion
-          ? Quiz(
-              // listQuestions: widget.quiz,
-              listQuestions: _convertToMap(),
-              indexSelected: indexQuestion,
-              clickButton: onAnwser)
-          : Result(
-              scoreQuiz: finalScore / widget.quiz.length,
-              onResetQuiz: onResetQuiz,
-            ),
+          ? Quiz(quizEntity: widget.quiz[indexQuestion], clickButton: onAnwser)
+          : Result(scoreQuiz: _scoreQuiz, onResetQuiz: onResetQuiz),
     );
   }
 }
