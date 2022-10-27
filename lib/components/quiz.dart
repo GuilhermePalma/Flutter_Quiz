@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 
 import '../model/entities/quiz_entity.dart';
 import '../model/view/quiz_view.dart';
-import 'buttonAnswer.dart';
-import 'customText.dart';
+import 'button_answer.dart';
+import 'custom_text.dart';
 
 class Quiz extends StatefulWidget {
   final QuizEntity quizEntity;

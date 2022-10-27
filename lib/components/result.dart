@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'customText.dart';
+
+import 'custom_text.dart';
 
 class Result extends StatelessWidget {
   final void Function() onResetQuiz;
