@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quiz/model/view/quiz_view.dart';
 
 import '../components/quiz.dart';
 import '../components/result.dart';
@@ -23,10 +24,10 @@ class _MyAppState extends State<QuizScreen> {
   bool get hasNextQuestion => indexQuestion < widget.quiz.length;
 
   // Metodo Acionado ao Responder uma Questão
-  void whenAnswer(int score) {
-    if (hasNextQuestion) {
+  void whenAnswer(dynamic isCorrect) {
+    if (hasNextQuestion && isCorrect is bool) {
       setState(() => indexQuestion++);
-      finalScore += score;
+      finalScore += isCorrect ? 10 : 0;
     }
   }
 
@@ -47,8 +48,21 @@ class _MyAppState extends State<QuizScreen> {
           ? Quiz(
               quizEntity: widget.quiz[indexQuestion],
               clickButton: whenAnswer,
+              questions: _generateQuestions,
             )
-          : Result(scoreQuiz: _scoreQuiz, onResetQuiz: onResetQuiz),
+          : Result(
+              scoreQuiz: _scoreQuiz,
+              onResetQuiz: onResetQuiz,
+            ),
     );
   }
+
+  List<QuizView> get _generateQuestions =>
+      widget.quiz[indexQuestion].incorrectAnswers
+          .map((e) => QuizView(question: e, isCorrect: false))
+          .toList()
+        ..add(QuizView(
+            question: widget.quiz[indexQuestion].correctAnswer,
+            isCorrect: true))
+        ..shuffle();
 }

@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
 
 import '../model/entities/quiz_entity.dart';
+import '../model/view/quiz_view.dart';
 import 'buttonAnswer.dart';
 import 'customText.dart';
 
 class Quiz extends StatefulWidget {
   final QuizEntity quizEntity;
-  final void Function(int) clickButton;
+  final void Function(dynamic) clickButton;
+  final List<QuizView> questions;
 
-  const Quiz({Key? key, required this.quizEntity, required this.clickButton})
-      : super(key: key);
+  const Quiz({
+    Key? key,
+    required this.quizEntity,
+    required this.clickButton,
+    required this.questions,
+  }) : super(key: key);
 
   @override
   State<Quiz> createState() => _QuizState();
@@ -17,12 +23,14 @@ class Quiz extends StatefulWidget {
 
 class _QuizState extends State<Quiz> {
   bool isAnswered = false;
+  List<ButtonAnswer>? values;
 
   void changeIsAnswered() => setState(() => isAnswered = !isAnswered);
 
   @override
   Widget build(BuildContext context) {
     return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         CustomText(widget.quizEntity.question),
         ..._getResponsesButtons(),
@@ -30,23 +38,17 @@ class _QuizState extends State<Quiz> {
     );
   }
 
-  List<Widget> _getResponsesButtons() => [
-        ...widget.quizEntity.incorrectAnswers.map((e) => ButtonAnswer(
-              text: e,
-              isCorrectAnswer: false,
-              isAnswered: isAnswered,
-              functionPressed: _internalState,
-            )),
-        ButtonAnswer(
-          text: widget.quizEntity.correctAnswer,
-          isCorrectAnswer: true,
-          isAnswered: isAnswered,
-          functionPressed: _internalState,
-        )
-      ]..shuffle();
-
-  _internalState() {
-    changeIsAnswered();
-    // widget.clickButton(0);
-  }
+  List<ButtonAnswer> _getResponsesButtons() => widget.questions
+      .map((e) => ButtonAnswer(
+            text: e.question,
+            isCorrectAnswer: e.isCorrect,
+            isAnswered: isAnswered,
+            functionPressed: () async {
+              changeIsAnswered();
+              await Future.delayed(const Duration(seconds: 3), () {});
+              changeIsAnswered();
+              widget.clickButton(e.isCorrect);
+            },
+          ))
+      .toList();
 }
