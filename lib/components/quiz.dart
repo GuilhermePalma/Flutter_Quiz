@@ -23,9 +23,12 @@ class Quiz extends StatefulWidget {
 
 class _QuizState extends State<Quiz> {
   bool isAnswered = false;
+  bool isLoading = false;
   List<ButtonAnswer>? values;
 
   void changeIsAnswered() => setState(() => isAnswered = !isAnswered);
+  void changeIsLoading({bool newValueIsLoading = false}) =>
+      setState(() => isLoading = newValueIsLoading);
 
   @override
   Widget build(BuildContext context) {
@@ -43,9 +46,12 @@ class _QuizState extends State<Quiz> {
             text: e.question,
             isCorrectAnswer: e.isCorrect,
             isAnswered: isAnswered,
+            isLoading: isLoading,
             functionPressed: () async {
               changeIsAnswered();
+              changeIsLoading(newValueIsLoading: true);
               await Future.delayed(const Duration(seconds: 3), () {});
+              changeIsLoading(newValueIsLoading: false);
               changeIsAnswered();
               widget.clickButton(e.isCorrect);
             },

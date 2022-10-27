@@ -4,6 +4,7 @@ class ButtonAnswer extends StatelessWidget {
   final String text;
   final bool isCorrectAnswer;
   final bool isAnswered;
+  final bool isLoading;
   final void Function() functionPressed;
 
   const ButtonAnswer({
@@ -12,7 +13,13 @@ class ButtonAnswer extends StatelessWidget {
     required this.isCorrectAnswer,
     required this.functionPressed,
     required this.isAnswered,
+    required this.isLoading,
   }) : super(key: key);
+
+  _dialogErrorIsLoading() {
+    // TODO IMPLEMENTS
+    print("it's not possible click. option already selected");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -34,7 +41,7 @@ class ButtonAnswer extends StatelessWidget {
             ),
           ],
         ),
-        onPressed: functionPressed,
+        onPressed: isLoading ? _dialogErrorIsLoading : functionPressed,
         style: isAnswered
             ? ElevatedButton.styleFrom(
                 backgroundColor: isCorrectAnswer ? Colors.green : Colors.red,
