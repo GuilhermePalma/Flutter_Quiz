@@ -62,17 +62,20 @@ class _QuizState extends State<Quiz> {
     );
   }
 
-  List<ButtonAnswer> _getResponsesButtons() => widget.questions
-      .map((e) => ButtonAnswer(
-            text: e.question,
-            isCorrectAnswer: e.isCorrect,
-            isAnswered: isAnswered,
-            isLoading: isLoading,
-            functionPressed: () {
-              changeIsAnswered();
-              changeIsLoading(newValueIsLoading: true);
-              progressIndicator(() => widget.clickButton(e.isCorrect));
-            },
+  List<Widget> _getResponsesButtons() => widget.questions
+      .map((e) => Padding(
+            padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+            child: ButtonAnswer(
+              text: e.question,
+              isCorrectAnswer: e.isCorrect,
+              isAnswered: isAnswered,
+              isLoading: isLoading,
+              functionPressed: () {
+                changeIsAnswered();
+                changeIsLoading(newValueIsLoading: true);
+                progressIndicator(() => widget.clickButton(e.isCorrect));
+              },
+            ),
           ))
       .toList();
 

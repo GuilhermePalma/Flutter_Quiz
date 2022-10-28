@@ -23,31 +23,28 @@ class ButtonAnswer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-      child: ElevatedButton(
-        child: Stack(
-          alignment: Alignment.center,
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 30),
-              child: Text(text),
-            ),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: isAnswered
-                  ? (Icon(isCorrectAnswer ? Icons.check_outlined : Icons.block))
-                  : Container(),
-            ),
-          ],
-        ),
-        onPressed: isLoading ? _dialogErrorIsLoading : functionPressed,
-        style: isAnswered
-            ? ElevatedButton.styleFrom(
-                backgroundColor: isCorrectAnswer ? Colors.green : Colors.red,
-              )
-            : null,
+    return ElevatedButton(
+      child: Stack(
+        alignment: Alignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 30),
+            child: Text(text),
+          ),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: isAnswered
+                ? (Icon(isCorrectAnswer ? Icons.check_outlined : Icons.block))
+                : Container(),
+          ),
+        ],
       ),
+      onPressed: isLoading ? _dialogErrorIsLoading : functionPressed,
+      style: isAnswered
+          ? ElevatedButton.styleFrom(
+              backgroundColor: isCorrectAnswer ? Colors.green : Colors.red,
+            )
+          : null,
     );
   }
 }
