@@ -13,9 +13,11 @@ class Quiz extends StatefulWidget {
   final int index;
   final void Function(dynamic) clickButton;
   final List<QuizView> questions;
+  final double maxTimeToResponse;
 
   const Quiz({
     Key? key,
+    this.maxTimeToResponse = 10,
     required this.index,
     required this.quizEntity,
     required this.clickButton,
@@ -27,16 +29,53 @@ class Quiz extends StatefulWidget {
 }
 
 class _QuizState extends State<Quiz> {
-  bool isAnswered = false;
-  bool isLoading = false;
+  bool? isAnswered;
+  bool? isLoading;
   List<ButtonAnswer>? values;
+  double? _secondsLeft;
 
-  double _timeLeft = 1;
+  /// Called once: When create Widget in Widget Tree
+  @override
+  void initState() {
+    super.initState();
+    refreshInternalTimer();
+  }
 
-  void changeIsAnswered() => setState(() => isAnswered = !isAnswered);
+  /// Called whenever the parent widget state is updated
+  @override
+  void didUpdateWidget(Quiz oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    refreshInternalTimer();
+  }
+
+  void refreshInternalTimer() {
+    _secondsLeft = widget.maxTimeToResponse;
+    isAnswered = false;
+    isLoading = false;
+    computeAnswerTime();
+  }
+
+  void changeIsAnswered() => setState(
+      () => isAnswered = (isAnswered == null) ? false : !(isAnswered!));
 
   void changeIsLoading({bool newValueIsLoading = false}) =>
       setState(() => isLoading = newValueIsLoading);
+
+  void computeAnswerTime() {
+    Timer.periodic(const Duration(seconds: 1), (Timer timer) {
+      // Not compute time after select the response
+      if (isAnswered != null && isAnswered!) {
+        timer.cancel();
+      } else {
+        setState(() => _secondsLeft = ((_secondsLeft ?? 0) - 1));
+      }
+
+      if ((_secondsLeft ?? 0) <= 0) {
+        timer.cancel();
+        _whenAnswer(() => widget.clickButton(false));
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,8 +92,9 @@ class _QuizState extends State<Quiz> {
                   child: _headerForm,
                 ),
                 LinearProgressIndicator(
-                  value: _timeLeft,
-                  color: Colors.blue[250],
+                  value: (widget.maxTimeToResponse - (_secondsLeft ?? 0)) /
+                      widget.maxTimeToResponse,
+                  color: Colors.green,
                 ),
                 const ShadowLine(),
                 const SizedBox(height: 16),
@@ -116,7 +156,7 @@ class _QuizState extends State<Quiz> {
             vertical: 4,
             horizontal: 16,
           ),
-          child: CustomText(_timeLeft.round().toString(),
+          child: CustomText(_secondsLeft!.round().toString(),
               textStyle: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
@@ -131,27 +171,26 @@ class _QuizState extends State<Quiz> {
             child: ButtonAnswer(
               text: e.question,
               isCorrectAnswer: e.isCorrect,
-              isAnswered: isAnswered,
-              isLoading: isLoading,
-              functionPressed: () {
-                changeIsAnswered();
-                changeIsLoading(newValueIsLoading: true);
-                progressIndicator(() => widget.clickButton(e.isCorrect));
-              },
+              isAnswered: isAnswered ?? false,
+              isLoading: isLoading ?? false,
+              functionPressed: () =>
+                  _whenAnswer(() => widget.clickButton(e.isCorrect)),
             ),
           ))
       .toList();
 
-  void progressIndicator(Function() afterFinishFunction) {
-    Timer.periodic(const Duration(milliseconds: 1400), (Timer timer) {
-      timer.cancel();
-      whenFinish(afterFinishFunction);
-    });
+  void _whenAnswer(Function() clickButton) {
+    changeIsAnswered();
+    changeIsLoading(newValueIsLoading: true);
+    delayBeforeNextQuestion(clickButton);
   }
 
-  void whenFinish(Function() clickButton) {
-    changeIsLoading(newValueIsLoading: false);
-    changeIsAnswered();
-    clickButton();
+  void delayBeforeNextQuestion(Function() afterFinishFunction) {
+    Timer.periodic(const Duration(milliseconds: 1400), (Timer timer) {
+      timer.cancel();
+      changeIsLoading(newValueIsLoading: false);
+      changeIsAnswered();
+      afterFinishFunction();
+    });
   }
 }
