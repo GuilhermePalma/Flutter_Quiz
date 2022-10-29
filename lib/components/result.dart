@@ -10,11 +10,11 @@ class Result extends StatelessWidget {
 
   String get phraseResult {
     if (scoreQuiz >= 8) {
-      return "Parabéns ! Você conhece muito de Flutter";
+      return "Parabéns ! Você foi Incrivel !";
     } else if (scoreQuiz >= 7) {
-      return "Parabéns ! Você sabe algumas coisas sobre o Flutter";
+      return "Parabéns ! Você foi Otimo !";
     } else if (scoreQuiz < 5) {
-      return "Não foi dessa vez ! Você conhece pouco do Flutter";
+      return "Não foi dessa vez ! Você não foi muito bem.";
     } else {
       return "Ops, ocorreu um Erro.";
     }
@@ -32,12 +32,10 @@ class Result extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 16, 8, 8),
-          child: Text(
+          child: CustomText(
             phraseResult,
-            style: const TextStyle(
-              fontSize: 28,
-            ),
-            textAlign: TextAlign.left,
+            textStyle: const TextStyle(fontSize: 28),
+            textAlign: TextAlign.center,
           ),
         ),
         Container(
