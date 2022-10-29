@@ -43,9 +43,10 @@ class _MyAppState extends State<QuizScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text("Quiz APP")),
+      appBar: AppBar(title: const Text("Challange")),
       body: hasNextQuestion
           ? Quiz(
+              index: (indexQuestion + 1),
               quizEntity: widget.quiz[indexQuestion],
               clickButton: whenAnswer,
               questions: _generateQuestions,

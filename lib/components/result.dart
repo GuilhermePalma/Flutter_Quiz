@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 
-import 'custom_text.dart';
-
 class Result extends StatelessWidget {
   final void Function() onResetQuiz;
   final double scoreQuiz;
 
-  Result({required this.scoreQuiz, required this.onResetQuiz});
+  const Result({Key? key, required this.scoreQuiz, required this.onResetQuiz})
+      : super(key: key);
 
   String get phraseResult {
     if (scoreQuiz >= 8) {
@@ -30,7 +29,16 @@ class Result extends StatelessWidget {
       // Centraliza o Conteudo
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        CustomText(phraseResult),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 16, 8, 8),
+          child: Text(
+            phraseResult,
+            style: const TextStyle(
+              fontSize: 28,
+            ),
+            textAlign: TextAlign.left,
+          ),
+        ),
         Container(
           margin: const EdgeInsets.all(16),
           child: Text(
