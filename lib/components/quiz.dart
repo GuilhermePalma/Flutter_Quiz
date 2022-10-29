@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:quiz/components/custom_text.dart';
+import 'package:quiz/components/shadow_line.dart';
 
 import '../model/entities/quiz_entity.dart';
 import '../model/view/quiz_view.dart';
@@ -47,27 +49,14 @@ class _QuizState extends State<Quiz> {
             child: Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: _getRow,
+                  padding: const EdgeInsets.all(10),
+                  child: _headerForm,
                 ),
                 LinearProgressIndicator(
                   value: _timeLeft,
                   color: Colors.blue[250],
                 ),
-                Container(
-                  height: 1,
-                  decoration: BoxDecoration(
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.grey.withOpacity(0.35),
-                        spreadRadius: 5,
-                        blurRadius: 7,
-                        offset:
-                            const Offset(0, 1), // changes position of shadow
-                      ),
-                    ],
-                  ),
-                ),
+                const ShadowLine(),
                 const SizedBox(height: 16),
                 Padding(
                   padding: const EdgeInsets.fromLTRB(16, 16, 8, 8),
@@ -90,53 +79,50 @@ class _QuizState extends State<Quiz> {
     );
   }
 
-  Widget get _getRow => Row(
+  Widget get _headerForm => Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Padding(
-            padding: EdgeInsets.only(left: 10),
-            child: Text(
-              "Quiz APP",
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
-            ),
+          const CustomText(
+            "Quiz APP",
+            padding: EdgeInsets.only(left: 8),
+            textStyle: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
           ),
-          Card(
-            color: Colors.blue[300],
-            child: Padding(
-              padding: const EdgeInsets.fromLTRB(8, 2, 8, 2),
-              child: Row(
-                children: [
-                  Text(
-                    "Time",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.grey[850],
-                    ),
-                  ),
-                  const SizedBox(width: 6),
-                  Card(
-                    color: Colors.grey[850],
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 4,
-                        horizontal: 16,
-                      ),
-                      child: Text(
-                        _timeLeft.round().toString(),
-                        style: const TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+          _getTimeBox,
         ],
+      );
+
+  Widget get _getTimeBox => Card(
+      color: Colors.blue[300],
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(8, 2, 8, 2),
+        child: Row(
+          children: [
+            CustomText("Time",
+                textStyle: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.grey[850],
+                )),
+            const SizedBox(width: 6),
+            _getNumberBox,
+          ],
+        ),
+      ));
+
+  Widget get _getNumberBox => Card(
+        color: Colors.grey[850],
+        child: Padding(
+          padding: const EdgeInsets.symmetric(
+            vertical: 4,
+            horizontal: 16,
+          ),
+          child: CustomText(_timeLeft.round().toString(),
+              textStyle: const TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.white,
+              )),
+        ),
       );
 
   List<Widget> _getResponsesButtons() => widget.questions

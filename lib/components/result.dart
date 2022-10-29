@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quiz/components/custom_text.dart';
 
 class Result extends StatelessWidget {
   final void Function() onResetQuiz;
@@ -41,13 +42,10 @@ class Result extends StatelessWidget {
         ),
         Container(
           margin: const EdgeInsets.all(16),
-          child: Text(
-            // Mostra a Pontuação com 2 Casas Decimais
-            "Sua Pontuação Media foi: $valueScore",
-            style: const TextStyle(
-              fontSize: 16,
-              color: Colors.black,
-            ),
+          child: CustomText(
+            "Your average score was: $valueScore",
+            textStyle: const TextStyle(fontSize: 16, color: Colors.black),
+            textAlign: TextAlign.center,
           ),
         ),
         ElevatedButton(
