@@ -26,38 +26,20 @@ class Quiz extends StatefulWidget {
 class _QuizState extends State<Quiz> {
   bool isAnswered = false;
   bool isLoading = false;
-  double _valueProgress = 0;
   List<ButtonAnswer>? values;
 
   void changeIsAnswered() => setState(() => isAnswered = !isAnswered);
   void changeIsLoading({bool newValueIsLoading = false}) =>
       setState(() => isLoading = newValueIsLoading);
 
-  void setValueProgress({double value = 0}) =>
-      setState(() => _valueProgress = value);
-  void incrementValueProgress({double quantity = 1}) =>
-      setState(() => _valueProgress += quantity);
-
   @override
   Widget build(BuildContext context) {
     return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        isLoading
-            ? LinearProgressIndicator(
-                value: _valueProgress,
-                color: Colors.lightGreenAccent,
-              )
-            : const SizedBox(height: 4),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CustomText(widget.quizEntity.question),
-            const SizedBox(height: 16),
-            Column(children: _getResponsesButtons()),
-          ],
-        ),
-        const SizedBox(height: 4),
+        CustomText(widget.quizEntity.question),
+        const SizedBox(height: 16),
+        Column(children: _getResponsesButtons()),
       ],
     );
   }
@@ -80,14 +62,9 @@ class _QuizState extends State<Quiz> {
       .toList();
 
   void progressIndicator(Function() afterFinishFunction) {
-    Timer.periodic(const Duration(milliseconds: 40), (Timer timer) {
-      if (_valueProgress >= 1) {
-        timer.cancel();
-        whenFinish(afterFinishFunction);
-        setValueProgress();
-      } else {
-        incrementValueProgress(quantity: 0.025);
-      }
+    Timer.periodic(const Duration(milliseconds: 1400), (Timer timer) {
+      timer.cancel();
+      whenFinish(afterFinishFunction);
     });
   }
 
